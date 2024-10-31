@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import Post from './components/Post';
+import PostForm from './components/PostForm';
 import './index.css';
 
 function App() {
   const [posts, setPosts] = useState([]);
   const [newPost, setNewPost] = useState('');
-  const [editingPost, setEditingPost] = useState(null);
   const [editContent, setEditContent] = useState('');
 
 
@@ -46,12 +47,6 @@ function App() {
     }
   };
 
-
-  const handleEditClick = (post) => {
-    setEditingPost(post);
-    setEditContent(post.content);
-  };
-
   const handleEditSubmit = async (e, postId) => {
     e.preventDefault();
     try {
@@ -66,7 +61,6 @@ function App() {
       }
 
       setPosts(posts.map(post => (post._id === postId ? { ...post, content: editContent } : post)));
-      setEditingPost(null);
       setEditContent('');
 
     } catch (error) {
@@ -91,28 +85,11 @@ function App() {
   return (
     <div className="container">
       <h1>掲示板</h1>
-      <form onSubmit={handlePostSubmit}>
-        <textarea value={newPost} onChange={(e) => setNewPost(e.target.value)} placeholder="新しい投稿を入力..." />
-        <button type="submit">投稿</button>
-      </form>
-
+      <PostForm onSubmit={handlePostSubmit} /> {/* ここでPostFormコンポーネントを使用 */}
+      <h2>投稿一覧</h2>
       <ul>
         {posts.map(post => (
-          <li key={post._id} className="post-item">
-            {editingPost === post ? (
-              <form onSubmit={(e) => handleEditSubmit(e, post._id)}>
-                <textarea value={editContent} onChange={(e) => setEditContent(e.target.value)} />
-                <button type="submit">保存</button>
-                <button type="button" onClick={() => setEditingPost(null)}>キャンセル</button>
-              </form>
-            ) : (
-              <div>
-                <p>{post.content}</p>
-                <button onClick={() => handleEditClick(post)}>編集</button>
-                <button onClick={() => handleDeleteClick(post._id)}>削除</button>
-              </div>
-            )}
-          </li>
+          <Post key={post._id} post={post} onEdit={handleEditSubmit} onDelete={handleDeleteClick} />
         ))}
       </ul>
     </div>
