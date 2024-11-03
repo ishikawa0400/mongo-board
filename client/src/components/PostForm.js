@@ -6,7 +6,7 @@ const PostForm = ({ onSubmit }) => {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		onSubmit(e);
+		onSubmit(e, content);
 		setContent("");
 	};
 

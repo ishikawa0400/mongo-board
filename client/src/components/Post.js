@@ -7,7 +7,7 @@ const Post = ({ post, onEdit, onDelete }) => {
 
 	const handleEditSubmit = (e) => {
 		e.preventDefault();
-		onEdit(post._id, editContent);
+		onEdit(e, post._id, editContent);
 		setIsEditing(false);
 	};
 

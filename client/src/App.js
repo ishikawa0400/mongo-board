@@ -5,8 +5,6 @@ import "./index.css";
 
 function App() {
 	const [posts, setPosts] = useState([]);
-	const [newPost, setNewPost] = useState("");
-	const [editContent, setEditContent] = useState("");
 
 	useEffect(() => {
 		fetchPosts();
@@ -26,33 +24,32 @@ function App() {
 		}
 	};
 
-	const handlePostSubmit = async (e) => {
+	const handlePostSubmit = async (e, content) => {
 		e.preventDefault();
 		try {
 			const res = await fetch("/api/posts", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ content: newPost }),
+				body: JSON.stringify({ content: content }),
 			});
 			if (!res.ok) {
 				throw new Error(`HTTP error! status: ${res.status}`);
 			}
 			const newPostData = await res.json();
 			setPosts([...posts, newPostData]);
-			setNewPost("");
 		} catch (error) {
 			console.error("Error creating post:", error);
 			alert("投稿の作成に失敗しました: " + error.message);
 		}
 	};
 
-	const handleEditSubmit = async (e, postId) => {
+	const handleEditSubmit = async (e, postId, content) => {
 		e.preventDefault();
 		try {
 			const res = await fetch(`/api/posts/${postId}`, {
 				method: "PUT",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ content: editContent }),
+				body: JSON.stringify({ content: content }),
 			});
 
 			if (!res.ok) {
@@ -61,12 +58,9 @@ function App() {
 
 			setPosts(
 				posts.map((post) =>
-					post._id === postId
-						? { ...post, content: editContent }
-						: post
+					post._id === postId ? { ...post, content: content } : post
 				)
 			);
-			setEditContent("");
 		} catch (error) {
 			console.error("Error updating post:", error);
 			alert("投稿の更新に失敗しました: " + error.message);
