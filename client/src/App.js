@@ -1,22 +1,19 @@
 import React, { useState, useEffect } from "react";
 import Post from "./components/Post";
 import PostForm from "./components/PostForm";
+import { fetchPosts, createPost, updatePost, deletePost } from "./Api";
 import "./index.css";
 
 function App() {
 	const [posts, setPosts] = useState([]);
 
 	useEffect(() => {
-		fetchPosts();
+		fetchPostsData();
 	}, []);
 
-	const fetchPosts = async () => {
+	const fetchPostsData = async () => {
 		try {
-			const res = await fetch("/api/posts");
-			if (!res.ok) {
-				throw new Error(`HTTP error! status: ${res.status}`);
-			}
-			const data = await res.json();
+			const data = await fetchPosts();
 			setPosts(data);
 		} catch (error) {
 			console.error("Error fetching posts:", error);
@@ -27,15 +24,7 @@ function App() {
 	const handlePostSubmit = async (e, content) => {
 		e.preventDefault();
 		try {
-			const res = await fetch("/api/posts", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ content: content }),
-			});
-			if (!res.ok) {
-				throw new Error(`HTTP error! status: ${res.status}`);
-			}
-			const newPostData = await res.json();
+			const newPostData = await createPost(content);
 			setPosts([...posts, newPostData]);
 		} catch (error) {
 			console.error("Error creating post:", error);
@@ -46,16 +35,7 @@ function App() {
 	const handleEditSubmit = async (e, postId, content) => {
 		e.preventDefault();
 		try {
-			const res = await fetch(`/api/posts/${postId}`, {
-				method: "PUT",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ content: content }),
-			});
-
-			if (!res.ok) {
-				throw new Error(`HTTP error! status: ${res.status}`);
-			}
-
+			await updatePost(postId, content);
 			setPosts(
 				posts.map((post) =>
 					post._id === postId ? { ...post, content: content } : post
@@ -69,12 +49,7 @@ function App() {
 
 	const handleDeleteClick = async (postId) => {
 		try {
-			const res = await fetch(`/api/posts/${postId}`, {
-				method: "DELETE",
-			});
-			if (!res.ok) {
-				throw new Error(`HTTP error! status: ${res.status}`);
-			}
+			await deletePost(postId);
 			setPosts(posts.filter((post) => post._id !== postId));
 		} catch (error) {
 			console.error("Error deleting post:", error);
