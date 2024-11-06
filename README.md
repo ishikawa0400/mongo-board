@@ -1,3 +1,5 @@
+こちらはGoogle AI Studioを利用して作成したreadmeです
+
 ## 掲示板アプリ 起動手順
 
 React, Express, MongoDBを使った掲示板アプリの起動手順
