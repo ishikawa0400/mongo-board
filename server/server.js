@@ -7,12 +7,6 @@ const port = 3001;
 
 // CORSの設定。すべてのオリジンを許可
 app.use(cors());
-// もしくは、特定のオリジンのみを許可
-const corsOptions = {
-	origin: "http://localhost:3000", // Reactアプリのオリジン
-	optionsSuccessStatus: 200, // レスポンスのステータスコード (IE11対策)
-};
-app.use(cors(corsOptions));
 
 app.use(express.json());
 
@@ -41,7 +35,10 @@ app.post("/api/posts", (req, res) => {
 	});
 	newPost
 		.save()
-		.then((post) => res.status(201).json(post))
+		.then((post) => {
+			console.log("post", post);
+			res.status(201).json(post);
+		})
 		.catch((err) => res.status(400).json({ message: err.message }));
 });
 
